@@ -1,3 +1,5 @@
 *.x
 *.o
 *.out
+census
+thanksgiving_data
