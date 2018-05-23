@@ -1,0 +1,14 @@
+DURATION OF A BEAT (MEAN 0.990044 STD 0.182318)
+
+NUM OF BEATS OBSERVED: 1823
+
+NUM OF BEAT TYPES OBSERVED: 8
+
+1) BEAT SYMBOL = 'A' (0.219419 ) Mean of Duration = 0.650694, Std = 0.089591
+2) BEAT SYMBOL = 'F' (0.109709 ) Mean of Duration = 1.012500, Std = 0.284807
+3) BEAT SYMBOL = 'N' (95.447065 ) Mean of Duration = 1.014430, Std = 0.137431
+4) BEAT SYMBOL = 'V' (0.877674 ) Mean of Duration = 0.520833, Std = 0.064613
+5) BEAT SYMBOL = 'j' (0.054855 ) Mean of Duration = 1.566667, Std = 0.000000
+6) BEAT SYMBOL = 'x' (0.603401 ) Mean of Duration = 0.288889, Std = 0.077708
+7) BEAT SYMBOL = '|' (0.438837 ) Mean of Duration = 0.392708, Std = 0.230720
+8) BEAT SYMBOL = '~' (2.249040 ) Mean of Duration = 0.460840, Std = 0.224802
