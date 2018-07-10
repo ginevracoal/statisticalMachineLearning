@@ -1,0 +1,30 @@
+---
+title: Low-rank matrix approximations 
+subtitle: on large-scale kernel methods
+author: Ginevra Carbone
+date: "*25 Luglio 2018*"
+output:
+  ioslides_presentation:
+  fig_width: 7
+  incremental: yes
+  smaller: yes
+  widescreen: yes
+html_document:
+  toc: yes
+editor_options:
+  chunk_output_type: inline
+always_allow_html: yes
+---
+                
+## Introduction 
+
+Kernel methods are based on the idea of projecting data points into a high-dimensional **feature space** and searching for the optimal **separating hyperplane** between points in that feature space.
+
+![46% center](figures/kernel_trick.png)
+
+
+---
+
+Now let's suppose that we want to train 
+
+The main limitation of these methods is their high computational cost, which is at least quadratic in the number of training points.
