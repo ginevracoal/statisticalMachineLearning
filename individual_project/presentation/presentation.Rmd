@@ -1,6 +1,6 @@
 ---
-title: Low-rank matrix approximations 
-subtitle: on large-scale kernel methods
+title: Kernel approximations on large-scale problems
+subtitles: Nyström method and Random Fourier features
 author: Ginevra Carbone
 date: "*25 Luglio 2018*"
 output:
@@ -16,15 +16,24 @@ editor_options:
 always_allow_html: yes
 ---
                 
-## Introduction 
+## Introduction {.build}
 
-Kernel methods are based on the idea of projecting data points into a high-dimensional **feature space** and searching for the optimal **separating hyperplane** between points in that feature space.
+Kernel methods are based on the idea of projecting data points into a high-dimensional **feature space** and searching for the optimal **separating hyperplane** in that feature space.
 
-![46% center](figures/kernel_trick.png)
+<!-- ![](figures/kernel_trick.png){ width=20 } -->
 
-
+<div align="center">
+<img src="figures/kernel_trick.png" width=600>
+</div>
 ---
 
-Now let's suppose that we want to train 
+## Introduction {.build}
 
-The main limitation of these methods is their high computational cost, which is at least quadratic in the number of training points.
+The main limitation of these methods is their high **computational cost**, which is at least quadratic in the number of training points, due the calculation of the kernel matrix.
+
+Low-rank decompositions of the matrix (like **Cholesky factorization **) r
+
+
+
+
+

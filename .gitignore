@@ -3,3 +3,6 @@
 *.out
 census
 thanksgiving_data
+.Rproj.user
+*.Rhistory
+*.Rproj
