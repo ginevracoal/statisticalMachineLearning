@@ -29,7 +29,7 @@ X_test -= test_mean
 
 # not taking the whole dataset
 
-n = 20000 # come quello del sito....
+n = 40000 
 X_train = X_train[:n]
 y_train = y_train[:n]
 X_test = X_test[:n//20]
@@ -39,5 +39,5 @@ y_test = y_test[:n//20]
 
 orig_mnist_fit = fit_all(X_train, y_train, X_test, y_test, gamma=0.031, C=100)
 
-save(orig_mnist_fit, 'orig_mnist_script')
+save(orig_mnist_fit, 'orig_mnist_40000')
 

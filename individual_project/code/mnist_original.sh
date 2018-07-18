@@ -7,6 +7,5 @@
 #SBATCH --partition=gll_usr_gpuprod
 #SBATCH --account=uts18_bortoldl_0
 
-. virtual_jupyter/bin/activate
-. nvidia-smi
+. virtualenv_2/bin/activate
 python /galileo/home/userexternal/gcarbone/individual/code/mnist_original.py

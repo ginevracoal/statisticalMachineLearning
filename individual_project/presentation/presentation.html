@@ -169,23 +169,30 @@ $(document).ready(function () {
 </div>
 <div id="nystrom-method" class="section level2">
 <h2>Nyström method</h2>
-<p>Take <span class="math inline">\(m\)</span> random samples with repetition <span class="math inline">\(\hat{\mathcal{D}} = \{\hat{x}_1,\dots, \hat{x}_m\}\)</span> of training points and consider the corresponding kernel matrix <span class="math inline">\(\hat{K} = [k(\hat{x_i},\hat{x_j})]_{m\times m}\)</span>.</p>
+<p>Take <span class="math inline">\(m\)</span> random samples with repetition <span class="math inline">\(\hat{\mathcal{D}} = \{\hat{x}_1,\dots, \hat{x}_m\}\)</span> of training points and consider the corresponding kernel matrix <span class="math inline">\(\hat{K} = [k(\hat{x}_i,\hat{x}_j)]_{m\times m}\)</span>.</p>
 <p>Supposing that <span class="math inline">\(\hat{K}\)</span> has rank <span class="math inline">\(r\)</span>, the main idea of the algorithm is to <strong>approximate <span class="math inline">\(K\)</span></strong> by the low-rank matrix <span class="math display">\[
 {\hat{K}}_r = K_b \hat{K}^+ {K_b}^{-1},
 \]</span> where <span class="math inline">\(K_b=[k(x_i,\hat{x_j})]_{N\times m}\)</span> and <span class="math inline">\(\hat{K}^+\)</span> is the Moore-Penrose pseudo inverse of <span class="math inline">\(\hat{K}\)</span> [2].</p>
-<p>Since <span class="math inline">\({\hat{K}}_r\)</span> has rank <span class="math inline">\(r\)</span>, storage and computational complexity reduce to <span class="math inline">\(O(Nm)\)</span> and <span class="math inline">\(O(Nm^2)\)</span> respectively.</p>
-<!-- si dimostra con la decomposizione SVD, che coincide con la eigendecomposition, trattandosi in questo caso di una matrice simmetrica e definita positiva -->
+<!-- storage and computational complexity reduce to $O(Nm)$ and $O(Nm^2)$ respectively. -->
+<p>Now we can derive a vector representation of data <span class="math display">\[
+z_n(x) = \hat{D}^{-1/2}_r \hat{V}^t_r (k(x,\hat{x}_1),\dots,k(x,\hat{x}_m))^t,
+\]</span> where <span class="math inline">\(\hat{K}_r=\hat{V}_r\hat{D}_r\hat{V}_r^t\)</span> is the eigendecomposition of <span class="math inline">\(\hat{K}_r\)</span>, and</p>
 </div>
 <div id="random-fourier-features" class="section level2">
 <h2>Random Fourier features</h2>
 <p>Also known as <strong>Random kitchen sinks</strong>, random Fourier features can be applied to all shift-invariant kernels, i.e. kernels of the form <span class="math inline">\(k(x,y)= k(x-y)\)</span>, since they rely upon the following result.</p>
-<p><strong>Theorem</strong> <em>(Bochner) A continuous shift-invariant kernel is positive definite iff it is the Fourier transform of a non-negative Borel measure.</em></p>
-<p>This implies that the Fourier transform of <span class="math inline">\(k\)</span> defines a probability distribution on <span class="math inline">\(\mathbb{R}^\)</span>.</p>
+<p><strong>Theorem.</strong> <em>(Bochner) A continuous shift-invariant kernel is positive definite iff it is the Fourier transform of a non-negative Borel measure.</em></p>
+<p>For the sake of simplicity we are going to focus on the <strong>Radial Basis function kernel</strong>.</p>
 <p><span class="math display">\[
-p(w)=\int_{\mathbb{R^d}}e^{-2\pi i w^t \delta} k(\delta) d\delta
+k(x,y) = exp\Bigg(-\frac{\Vert x-y\Vert_2^2}{2 \sigma^2}\Bigg).
 \]</span></p>
-<p>of a kernel <span class="math inline">\(k(x-y)=e^{-\frac{\Vert x-y\Vert_2^2}{2\sigma^2}}\)</span> defines a probability distribution of</p>
-<p>project data into a randomly chosen line, [3]</p>
+<p>The theorem implies that the Fourier transform of <span class="math inline">\(k\)</span> defines a probability distribution on <span class="math inline">\(\mathbb{R}^d\)</span>:</p>
+<p><span class="math display">\[
+p(w)=\int_{\mathbb{R^d}}e^{-2\pi i w^t \delta} k(\delta) d\delta.
+\]</span></p>
+<p>By projecting data onto <strong>randomly chosen lines</strong> with directions <span class="math inline">\(w_1,\dots,w_n\)</span> drawn from <span class="math inline">\(p\)</span>, we guarantee that the inner product of two transformed points approximates the shift invariant kernel [3].</p>
+<p>The idea is to pass these projections through sine and cosine functions <span class="math inline">\(z_p(x)=(sin(w_1^t x),cos(w_1^t x), \dots, sin(w_n^t x), cos(w_n^t x))\)</span> and learn a linear machine <span class="math inline">\(f(x)=w^t z_p(x)\)</span> [4].</p>
+<p>Basically we are searching for <span class="math inline">\(f\)</span> in the randomly generated subspace <span class="math inline">\(\mathcal{H}^f=span(sin(w_1^t x),cos(w_1^t x), \dots, sin(w_n^t x), cos(w_n^t x))\subseteq \mathcal{H}_{\mathcal{D}}\)</span> <!-- qui mettere immagine pag. 3 articolo 3 --></p>
 </div>
 <div id="theoretical-differences" class="section level2">
 <h2>Theoretical differences</h2>
@@ -201,10 +208,6 @@ min_{f\in\mathcal{H}_\mathcal{D}} {\frac{\lambda}{2}\Vert f \Vert_{\mathcal{H}_k
 </div>
 <div id="testing-phase" class="section level2">
 <h2>Testing phase</h2>
-<p>For the sake of simplicity we are going to focus on <strong>Radial Basis function kernel</strong></p>
-<p><span class="math display">\[
-k(x,y) = exp\Big(-\frac{\Vert x-y\Vert_2^2}{2 \sigma^2}\Big)
-\]</span></p>
 <p>and test the results on classification and regression with <strong>Support vector machines</strong>.</p>
 <!-- faccio anche regressione? -->
 <p>Both methods are already provided by <code>scikit-learn</code> library under the names of <code>RBFSampler</code> and <code>Nystroem</code> [1].</p>
@@ -231,7 +234,7 @@ k(x,y) = exp\Big(-\frac{\Vert x-y\Vert_2^2}{2 \sigma^2}\Big)
 <p>[1] Explicit feature map approximation for RBF kernels, scikit-learn library, <a href="http://scikit-learn.org/stable/auto_examples/plot_kernel_approximation.html#sphx-glr-auto-examples-plot-kernel-approximation-py" class="uri">http://scikit-learn.org/stable/auto_examples/plot_kernel_approximation.html#sphx-glr-auto-examples-plot-kernel-approximation-py</a></p>
 <p>[2] P. Drineas and M. W. Mahoney, “On the Nystrom Method for Approximating a Gram Matrix for Improved Kernel-Based Learning”, 2005, JMLR, <a href="http://www.jmlr.org/papers/volume6/drineas05a/drineas05a.pdf" class="uri">http://www.jmlr.org/papers/volume6/drineas05a/drineas05a.pdf</a>.</p>
 <p>[3] A. Rahimi and B. Recht, “Random features for large-scale kernel machines” , 2007, NIPS, <a href="https://www.robots.ox.ac.uk/~vgg/rg/papers/randomfeatures.pdf" class="uri">https://www.robots.ox.ac.uk/~vgg/rg/papers/randomfeatures.pdf</a>.</p>
-<p>[] T. Yang, Y.-F. Li, M. Mahdavi, R. Jin and Z.-H. ZhouNystrom, “Nystrom Method vs Random Fourier Features: A Theoretical and Empirical Comparison”, 2012, NIPS, <a href="https://papers.nips.cc/paper/4588-nystrom-method-vs-random-fourier-features-a-theoretical-and-empirical-comparison.pdf" class="uri">https://papers.nips.cc/paper/4588-nystrom-method-vs-random-fourier-features-a-theoretical-and-empirical-comparison.pdf</a>.</p>
+<p>[4] T. Yang, Y.-F. Li, M. Mahdavi, R. Jin and Z.-H. ZhouNystrom, “Nystrom Method vs Random Fourier Features: A Theoretical and Empirical Comparison”, 2012, NIPS, <a href="https://papers.nips.cc/paper/4588-nystrom-method-vs-random-fourier-features-a-theoretical-and-empirical-comparison.pdf" class="uri">https://papers.nips.cc/paper/4588-nystrom-method-vs-random-fourier-features-a-theoretical-and-empirical-comparison.pdf</a>.</p>
 </div>
 
 

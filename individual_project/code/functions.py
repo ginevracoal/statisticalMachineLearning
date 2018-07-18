@@ -34,12 +34,12 @@ nystroem_svm = pipeline.Pipeline([("feature_map", nystroem),("svm", linear_svm)]
 # number of random samples
 def samples(train_data, scale_samples=30):
 		# samples = len(train_data)//60 * np.arange(1,10)
-	  samples = scale_samples * np.arange(1,10)
-	  return(samples)
+	samples = scale_samples * np.arange(1,11)
+	return(samples)
 
 
 # fit and predict linear and kernel SVMs
-def kernel(train_data, train_labels, test_data, test_labels, gamma=gamma):
+def kernel(train_data, train_labels, test_data, test_labels, gamma=gamma, C=C):
 		print("\nkernel svm fitting")
 		start = time()
 		kernel_svm.fit(train_data, train_labels)
@@ -47,7 +47,7 @@ def kernel(train_data, train_labels, test_data, test_labels, gamma=gamma):
 		kernel_svm_time = time() - start
 		return({'score':kernel_svm_score, 'time':kernel_svm_time})
 
-def linear(train_data, train_labels, test_data, test_labels):
+def linear(train_data, train_labels, test_data, test_labels, C=C):
 		print("\nlinear svm fitting")
 		start = time()
 		linear_svm.fit(train_data, train_labels)

@@ -58,30 +58,32 @@ We are now going to explore **Nyström method** and **random Fourier features**,
 
 ## Nyström method
 
-
-
-Take $m$ random samples with repetition $\hat{\mathcal{D}} = \{\hat{x}_1,\dots, \hat{x}_m\}$ of training points and consider the corresponding kernel matrix $\hat{K} = [k(\hat{x_i},\hat{x_j})]_{m\times m}$.
+Take $m$ random samples with repetition $\hat{\mathcal{D}} = \{\hat{x}_1,\dots, \hat{x}_m\}$ of training points and consider the corresponding kernel matrix $\hat{K} = [k(\hat{x}_i,\hat{x}_j)]_{m\times m}$.
 
 Supposing that $\hat{K}$ has rank $r$, the main idea of the algorithm is to **approximate $K$** by the low-rank matrix 
 $$
 {\hat{K}}_r = K_b \hat{K}^+ {K_b}^{-1},
 $$
-where $K_b=[k(x_i,\hat{x_j})]_{N\times m}$ and $\hat{K}^+$ is the Moore-Penrose pseudo inverse of $\hat{K}$ [2].
+where $K_b=[k(x_i,\hat{x_j})]_{N\times m}$ and $\hat{K}^+$ is the Moore-Penrose pseudo inverse of $\hat{K}$ [].
 
-Since ${\hat{K}}_r$ has rank $r$, storage and computational complexity reduce to $O(Nm)$ and $O(Nm^2)$ respectively.
+<!-- storage and computational complexity reduce to $O(Nm)$ and $O(Nm^2)$ respectively. -->
 
-<!-- si dimostra con la decomposizione SVD, che coincide con la eigendecomposition, trattandosi in questo caso di una matrice simmetrica e definita positiva -->
+Now we can derive a vector representation of data 
+$$
+z_n(x) = \hat{D}^{-1/2}_r \hat{V}^t_r (k(x,\hat{x}_1),\dots,k(x,\hat{x}_m))^t,
+$$
+where $\hat{K}_r=\hat{V}_r\hat{D}_r\hat{V}_r^t$ is the eigendecomposition of $\hat{K}_r$, and 
 
 ## Random Fourier features
 
 Also known as **Random kitchen sinks**, random Fourier features can be applied to all shift-invariant kernels, i.e. kernels of the form  $k(x,y)= k(x-y)$, since they rely upon the following result.
 
-**Theorem** *(Bochner) A continuous shift-invariant kernel is positive definite iff it is the Fourier transform of a non-negative Borel measure.*
+**Theorem.** *(Bochner) A continuous shift-invariant kernel is positive definite iff it is the Fourier transform of a non-negative Borel measure.*
 
-For the sake of simplicity we are going to focus on the **Radial Basis function kernel** in $\mathbb{R}^d$
+For the sake of simplicity we are going to focus on the **Radial Basis function kernel**.
 
 $$
-k(x,y) = exp\Big(-\frac{\Vert x-y\Vert_2^2}{2 \sigma^2}\Big).
+k(x,y) = exp\Bigg(-\frac{\Vert x-y\Vert_2^2}{2 \sigma^2}\Bigg).
 $$
 
 The theorem implies that the Fourier transform of $k$ defines a probability distribution on $\mathbb{R}^d$:
@@ -90,10 +92,11 @@ $$
 p(w)=\int_{\mathbb{R^d}}e^{-2\pi i w^t \delta} k(\delta) d\delta.
 $$
 
-If we project data into a randomly chosen lines with directions $w_1,\dots,w_n$ drawn from $p$, we guarantee that the inner product of two transformed points approximates the shift invariant kernel [3].
+By projecting data onto **randomly chosen lines** with directions $w_1,\dots,w_n$ drawn from $p$, we guarantee that the inner product of two transformed points approximates the shift invariant kernel [].
 
-The idea is to pass these projections through sine and cosine functions $z_f(x)=$ and learn a linear machine $f(x)=w^t z_f(x)$
+The idea is to pass these projections through sine and cosine functions $z_p(x)=(sin(w_1^t x),cos(w_1^t x), \dots, sin(w_n^t x), cos(w_n^t x))$ and learn a linear machine $f(x)=w^t z_p(x)$ [4].
 
+Basically we are searching for $f$ in the randomly generated subspace $\mathcal{H}^f=span(sin(w_1^t x),cos(w_1^t x), \dots, sin(w_n^t x), cos(w_n^t x))\subseteq \mathcal{H}_{\mathcal{D}}$ 
 <!-- qui mettere immagine pag. 3 articolo 3 -->
 
 ## Theoretical differences
@@ -120,17 +123,26 @@ and test the results on classification and regression with **Support vector mach
 
 <!-- faccio anche regressione? -->
 
-Both methods are already provided by `scikit-learn` library under the names of `RBFSampler` and `Nystroem` [1].
+Both methods are already provided by `scikit-learn` library under the names of `RBFSampler` and `Nystroem` [].
 
 
 
 The datasets have to be large enough to show the improvements in performances.
 
-- mnist
-- adult
-- forest
-- leaf
-- ...
+- leaf 
+
+train: 792 , test: 198
+in questo caso ovviamente i metodi sono troppo lenti per vedere buoni risultati ma può servire a spiegare cosa voglio ottenere
+
+- adult va già bene come risultato
+
+24129 training, 6033 test
+
+
+
+- mnist original non funziona come dovrebbe...
+
+- forest/ covtype
 
 ## Empirical results
 
@@ -141,12 +153,12 @@ The datasets have to be large enough to show the improvements in performances.
 
 ## References
 
-[1] Explicit feature map approximation for RBF kernels, scikit-learn library, http://scikit-learn.org/stable/auto_examples/plot_kernel_approximation.html#sphx-glr-auto-examples-plot-kernel-approximation-py 
+[] Explicit feature map approximation for RBF kernels, scikit-learn library, http://scikit-learn.org/stable/auto_examples/plot_kernel_approximation.html#sphx-glr-auto-examples-plot-kernel-approximation-py 
 
-[2] P. Drineas and M. W. Mahoney, "On the Nystrom Method for Approximating a Gram Matrix for Improved Kernel-Based Learning", 2005, JMLR,
+[] P. Drineas and M. W. Mahoney, "On the Nystrom Method for Approximating a Gram Matrix for Improved Kernel-Based Learning", 2005, JMLR,
 http://www.jmlr.org/papers/volume6/drineas05a/drineas05a.pdf.
 
-[3] A. Rahimi and B. Recht, "Random features for large-scale kernel machines" , 2007, NIPS, https://www.robots.ox.ac.uk/~vgg/rg/papers/randomfeatures.pdf.
+[] A. Rahimi and B. Recht, "Random features for large-scale kernel machines" , 2007, NIPS, https://www.robots.ox.ac.uk/~vgg/rg/papers/randomfeatures.pdf.
 
 
 [] T. Yang, Y.-F. Li, M. Mahdavi, R. Jin and Z.-H. ZhouNystrom, "Nystrom Method vs Random Fourier Features: A Theoretical and Empirical Comparison", 2012, NIPS, https://papers.nips.cc/paper/4588-nystrom-method-vs-random-fourier-features-a-theoretical-and-empirical-comparison.pdf.
