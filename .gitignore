@@ -10,3 +10,5 @@ thanksgiving_data
 *.pdf
 04_hmm/ECG_processed_data/*
 05_keras/keras_lab_3/imgs/*
+05_keras/MNIST_data/*
+individual_project/references/*
