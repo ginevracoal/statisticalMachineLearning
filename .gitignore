@@ -12,3 +12,13 @@ thanksgiving_data
 05_keras/keras_lab_3/imgs/*
 05_keras/MNIST_data/*
 individual_project/references/*
+*.csv
+02_scikit_learn/scikit_learn_map.png
+05_keras/.ipynb_checkpoints/
+05_keras/intro_to_keras.ipynb
+05_kears/keras_lab_3/*
+"05_keras/keras_lab_3/4. Convolutional Neural Networks/.ipynb_checkpoints/4.4 Deep Convolutional Neural Networks-checkpoint.ipynb"
+"05_keras/keras_lab_3/4. Convolutional Neural Networks/4.4 Deep Convolutional Neural Networks.ipynb"
+"05_keras/keras_lab_3/6. AutoEncoders and Embeddings/.ipynb_checkpoints/"
+"05_keras/keras_lab_3/6. AutoEncoders and Embeddings/6.1. AutoEncoders and Embeddings.ipynb"
+
