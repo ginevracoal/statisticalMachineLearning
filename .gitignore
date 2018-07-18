@@ -1,6 +1,7 @@
 *.x
 *.o
 *.out
+
 census
 thanksgiving_data
 .Rproj.user
@@ -21,3 +22,4 @@ individual_project/presentation/presentation.html
 02_scikit_learn/co2/co2_weekly_mlo.txt
 04_hmm/hmm_notebook/plot_hmm_sampling.ipynb
 
+ad934b89c988f7c957652f57a636b31f7d4a7da6
