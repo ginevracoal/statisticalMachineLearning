@@ -6,3 +6,4 @@ thanksgiving_data
 .Rproj.user
 *.Rhistory
 *.Rproj
+*.pickle
