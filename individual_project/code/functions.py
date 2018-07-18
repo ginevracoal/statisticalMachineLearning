@@ -14,29 +14,32 @@ import os
 from sklearn.preprocessing import LabelEncoder
 from sklearn.model_selection import train_test_split
 
+# default parameters
+gamma=0.01
+C = 100
+
 # SVM classifiers
-gamma = 0.5
-kernel_svm = svm.SVC(kernel='rbf', gamma=gamma)
-linear_svm = svm.SVC(kernel='linear')
+kernel_svm = svm.SVC(kernel='rbf', gamma=gamma, C=C)
+linear_svm = svm.SVC(kernel='linear', C=C)
 
 # the two methods
 random_fourier = RBFSampler(gamma=gamma, random_state=1)
 nystroem = Nystroem(gamma=gamma, random_state=1)
 
-# pipelines for kernel approxixmations
+# pipelines for kernel approximations
 fourier_svm = pipeline.Pipeline([("feature_map", random_fourier),("svm", linear_svm)])
 nystroem_svm = pipeline.Pipeline([("feature_map", nystroem),("svm", linear_svm)])
 
 
 # number of random samples
-def samples(train_data):
+def samples(train_data, scale_samples=30):
 		# samples = len(train_data)//60 * np.arange(1,10)
-	  samples = 30 * np.arange(1,9)
+	  samples = scale_samples * np.arange(1,10)
 	  return(samples)
 
 
 # fit and predict linear and kernel SVMs
-def kernel(train_data, train_labels, test_data, test_labels):
+def kernel(train_data, train_labels, test_data, test_labels, gamma=gamma):
 		print("\nkernel svm fitting")
 		start = time()
 		kernel_svm.fit(train_data, train_labels)
@@ -52,12 +55,12 @@ def linear(train_data, train_labels, test_data, test_labels):
 		linear_svm_time = time() - start
 		return ({'score':linear_svm_score, 'time':linear_svm_time})
 
-def nystroem(train_data, train_labels, test_data, test_labels):
+def nystroem(train_data, train_labels, test_data, test_labels, scale_samples, gamma=gamma):
 		print("\nnystroem svm fitting")
 
 		nystroem_scores = []
 		nystroem_times = []
-		sample_sizes = samples(train_data)
+		sample_sizes = samples(train_data, scale_samples)
 
 		for D in sample_sizes:
 				print("\n", D, "/", max(sample_sizes),"samples")
@@ -73,13 +76,13 @@ def nystroem(train_data, train_labels, test_data, test_labels):
 
 		return({'scores':nystroem_scores, 'times':nystroem_times})
 
-def fourier(train_data, train_labels, test_data, test_labels):
+def fourier(train_data, train_labels, test_data, test_labels, scale_samples, gamma=gamma):
 
 		print("\nfourier svm fitting")
 
 		fourier_scores = []
 		fourier_times = []
-		sample_sizes = samples(train_data)
+		sample_sizes = samples(train_data, scale_samples)
 
 		for D in sample_sizes:
 				print("\n", D, "/", max(sample_sizes),"samples")
@@ -96,17 +99,20 @@ def fourier(train_data, train_labels, test_data, test_labels):
 
 
 # fits all methods and predicts test set
-def fit_all(train_data, train_labels, test_data, test_labels):
-		sample_sizes = samples(train_data)
-		kernel_out = kernel(train_data, train_labels, test_data, test_labels)
-		linear_out = linear(train_data, train_labels, test_data, test_labels)
-		nystroem_out = nystroem(train_data, train_labels, test_data, test_labels)
-		fourier_out = fourier(train_data, train_labels, test_data, test_labels)
+def fit_all(train_data, train_labels, test_data, test_labels, scale_samples=30, gamma=gamma, C=C):
+	  
+		print("\nusing gamma=", gamma)
+		sample_sizes = samples(train_data, scale_samples)
+		nystroem_out = nystroem(train_data, train_labels, test_data, test_labels, scale_samples, gamma)
+		fourier_out = fourier(train_data, train_labels, test_data, test_labels, scale_samples, gamma)
+		kernel_out = kernel(train_data, train_labels, test_data, test_labels, gamma=gamma, C=C)
+		linear_out = linear(train_data, train_labels, test_data, test_labels, C=C)
 
 		return({'kernel':kernel_out, 'linear':linear_out, 'nystroem':nystroem_out, 'fourier':fourier_out, 'sample_sizes':sample_sizes})
 
 def save(fit, filename):
-		with open('pickle/'+filename+'.pickle', 'wb') as handle:
+		abs_path = '/galileo/home/userexternal/gcarbone/individual/code/pickle/'
+		with open(abs_path+filename+'.pickle', 'wb') as handle:
 				pickle.dump(fit, handle, protocol=pickle.HIGHEST_PROTOCOL)
 
 # takes a fit_all argument
@@ -151,22 +157,24 @@ def plot_results(fit):
 		               [linear_svm_time, linear_svm_time], '--', label='linear svm')
 
 		accuracy.plot([sample_sizes[0], sample_sizes[-1]],
-		              [kernel_svm_score, kernel_svm_score], label="rbf svm")
+		              [kernel_svm_score, kernel_svm_score], label="RBF svm")
 		timescale.plot([sample_sizes[0], sample_sizes[-1]],
-		               [kernel_svm_time, kernel_svm_time], '--', label='rbf svm')
+		               [kernel_svm_time, kernel_svm_time], '--', label='RBF svm')
 
 		# vertical line for dataset dimensionality = 64
 		# accuracy.plot([64, 64], [0.7, 1], label="n_features")
 
 		# legends and labels
-		accuracy.set_title("Classification accuracy")
-		timescale.set_title("Training times")
+		# accuracy.set_title("Classification accuracy")
+		# timescale.set_title("Training times")
 		accuracy.set_xlim(sample_sizes[0], sample_sizes[-1])
+		timescale.set_xlim(sample_sizes[0], sample_sizes[-1])
 		# accuracy.set_xticks(())
-		accuracy.set_ylim(np.min(fourier_scores), 1)
-		timescale.set_xlabel("Sampling steps = transformed feature dimension")
+		accuracy.set_ylim(np.min(fourier_scores), kernel_svm_score+0.05)
+		timescale.set_xlabel("Number of samples")
+		accuracy.set_xlabel("Number of samples")
 		accuracy.set_ylabel("Classification accuracy")
-		timescale.set_ylabel("Training time in seconds")
+		timescale.set_ylabel("Training time (s)")
 		accuracy.legend(loc='best')
 		timescale.legend(loc='best')
 
