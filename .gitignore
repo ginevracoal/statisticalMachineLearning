@@ -7,3 +7,6 @@ thanksgiving_data
 *.Rhistory
 *.Rproj
 *.pickle
+*.pdf
+04_hmm/ECG_processed_data/*
+05_keras/keras_lab_3/imgs/*
