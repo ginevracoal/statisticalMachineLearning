@@ -34,7 +34,7 @@ nystroem_svm = pipeline.Pipeline([("feature_map", nystroem),("svm", linear_svm)]
 # number of random samples
 def samples(train_data, scale_samples=30):
 		# samples = len(train_data)//60 * np.arange(1,10)
-	samples = scale_samples * np.arange(1,11)
+	samples = scale_samples * np.arange(4,11)
 	return(samples)
 
 
