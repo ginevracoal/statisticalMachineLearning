@@ -2,7 +2,7 @@
 title: Kernel approximations on large-scale problems
 subtitles: Nyström method and Random Fourier features
 author: Ginevra Carbone
-date: "*25 Luglio 2018*"
+date: "*Luglio 2018*"
 output:
   html_document:
     toc: yes
@@ -83,7 +83,7 @@ Also known as **Random kitchen sinks**, random Fourier features can be applied t
 For the sake of simplicity we are going to focus on the **Radial Basis function kernel**.
 
 $$
-k(x,y) = exp\Bigg(-\frac{\Vert x-y\Vert_2^2}{2 \sigma^2}\Bigg).
+k(x,y) = exp\big(-\gamma\Vert x-y\Vert_2^2\big).
 $$
 
 The theorem implies that the Fourier transform of $k$ defines a probability distribution on $\mathbb{R}^d$:
@@ -125,7 +125,7 @@ and test the results on classification and regression with **Support vector mach
 
 Both methods are already provided by `scikit-learn` library under the names of `RBFSampler` and `Nystroem` [].
 
-
+<!-- spiegare bene come sono implementate le due funzioni in python, che parametri prendono in input e come li ho scelti (anche grid search) -->
 
 The datasets have to be large enough to show the improvements in performances.
 
@@ -134,19 +134,20 @@ The datasets have to be large enough to show the improvements in performances.
 train: 792 , test: 198
 in questo caso ovviamente i metodi sono troppo lenti per vedere buoni risultati ma può servire a spiegare cosa voglio ottenere
 
-- adult va già bene come risultato
+- adult va già bene come primo risultato anche se piccolo
 
 24129 training, 6033 test
 
-
-
-- mnist original non funziona come dovrebbe...
-
 - forest/ covtype
+
+bene, ho almeno un buon esempio da fare!
+
+- mnist original non funziona come dovrebbe... devo provare con più samples
 
 ## Empirical results
 
-- regression vs classification performances
+- regression vs classification performances?
+- esempio PCA?
 
 ## Considerations
 
