@@ -5,7 +5,6 @@ from time import time
 
 from sklearn import svm, pipeline
 from sklearn.kernel_approximation import (RBFSampler,Nystroem)
-# from sklearn.decomposition import PCA
 from sklearn import datasets
 
 from keras.datasets import mnist
@@ -15,8 +14,9 @@ from sklearn.preprocessing import LabelEncoder
 from sklearn.model_selection import train_test_split
 
 # default parameters
-gamma=0.01
+gamma=0.1
 C = 100
+scale_samples = 30
 
 # SVM classifiers
 kernel_svm = svm.SVC(kernel='rbf', gamma=gamma, C=C)
@@ -32,10 +32,10 @@ nystroem_svm = pipeline.Pipeline([("feature_map", nystroem),("svm", linear_svm)]
 
 
 # number of random samples
-def samples(train_data, scale_samples=30):
+def samples(train_data, scale_samples=scale_samples):
 		# samples = len(train_data)//60 * np.arange(1,10)
-	samples = scale_samples * np.arange(4,11)
-	return(samples)
+		samples = scale_samples * np.arange(4,11)
+		return(samples)
 
 
 # fit and predict linear and kernel SVMs
@@ -45,6 +45,7 @@ def kernel(train_data, train_labels, test_data, test_labels, gamma=gamma, C=C):
 		kernel_svm.fit(train_data, train_labels)
 		kernel_svm_score = kernel_svm.score(test_data,test_labels)
 		kernel_svm_time = time() - start
+
 		return({'score':kernel_svm_score, 'time':kernel_svm_time})
 
 def linear(train_data, train_labels, test_data, test_labels, C=C):
@@ -55,7 +56,7 @@ def linear(train_data, train_labels, test_data, test_labels, C=C):
 		linear_svm_time = time() - start
 		return ({'score':linear_svm_score, 'time':linear_svm_time})
 
-def nystroem(train_data, train_labels, test_data, test_labels, scale_samples, gamma=gamma):
+def nystroem(train_data, train_labels, test_data, test_labels, scale_samples=scale_samples, gamma=gamma, random_state=1):
 		print("\nnystroem svm fitting")
 
 		nystroem_scores = []
@@ -73,10 +74,10 @@ def nystroem(train_data, train_labels, test_data, test_labels, scale_samples, ga
 
 				nystroem_score = nystroem_svm.score(test_data, test_labels)
 				nystroem_scores.append(nystroem_score)
-
+		
 		return({'scores':nystroem_scores, 'times':nystroem_times})
 
-def fourier(train_data, train_labels, test_data, test_labels, scale_samples, gamma=gamma):
+def fourier(train_data, train_labels, test_data, test_labels, scale_samples=scale_samples, gamma=gamma, random_state=1):
 
 		print("\nfourier svm fitting")
 
@@ -94,17 +95,17 @@ def fourier(train_data, train_labels, test_data, test_labels, scale_samples, gam
 
 				fourier_score = fourier_svm.score(test_data, test_labels)
 				fourier_scores.append(fourier_score)
-
+		
 		return({'scores':fourier_scores, 'times':fourier_times})
 
 
 # fits all methods and predicts test set
-def fit_all(train_data, train_labels, test_data, test_labels, scale_samples=30, gamma=gamma, C=C):
+def fit_all(train_data, train_labels, test_data, test_labels, scale_samples=30, gamma=gamma, C=C, random_state=1):
 	  
 		print("\nusing gamma=", gamma)
 		sample_sizes = samples(train_data, scale_samples)
-		nystroem_out = nystroem(train_data, train_labels, test_data, test_labels, scale_samples, gamma)
-		fourier_out = fourier(train_data, train_labels, test_data, test_labels, scale_samples, gamma)
+		nystroem_out = nystroem(train_data, train_labels, test_data, test_labels, scale_samples, gamma, random_state)
+		fourier_out = fourier(train_data, train_labels, test_data, test_labels, scale_samples, gamma, random_state)
 		kernel_out = kernel(train_data, train_labels, test_data, test_labels, gamma=gamma, C=C)
 		linear_out = linear(train_data, train_labels, test_data, test_labels, C=C)
 

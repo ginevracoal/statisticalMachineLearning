@@ -5,6 +5,7 @@ import encode_csv
 from functions import * 
 from encode_csv import * 
 
+
 path='/galileo/home/userexternal/gcarbone/individual/'
 
 covtype = pd.read_csv(path+'datasets/covtype.data')
@@ -25,12 +26,8 @@ print("train:", len(X_train), ", test:", len(X_test))
 
 # taking subsets
 
-n = 30000 
-covtype_fit_30000 = fit_all(X_train[:n], y_train[:n], X_test[:n//20], y_test[:n//20])
-save(covtype_fit_30000, 'covtype_fit_30000')
-
-n = 50000 
-covtype_fit_50000 = fit_all(X_train[:n], y_train[:n], X_test[:n//20], y_test[:n//20])
-save(covtype_fit_50000, 'covtype_fit_50000')
+n = 600 
+covtype_fit_600 = fit_all(X_train[:n], y_train[:n], X_test[:n//20], y_test[:n//20])
+save(covtype_fit_600, 'covtype_fit_600')
 
 

@@ -8,4 +8,4 @@
 #SBATCH --account=uts18_bortoldl_0
 
 . virtualenv_2/bin/activate
-python /galileo/home/userexternal/gcarbone/individual/code/mnist_original.py
+python /galileo/home/userexternal/gcarbone/individual/code/covtype_small_test.py

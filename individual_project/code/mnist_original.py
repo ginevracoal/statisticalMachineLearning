@@ -7,7 +7,7 @@ from functions import *
 (X_train, y_train), (X_test, y_test) = mnist.load_data()
 digits = X_train
 
-# print("train:", X_train.shape, ", test:", X_test.shape)
+print("train:", X_train.shape, ", test:", X_test.shape)
 
 # flatten 28*28 images to a 784 vector for each image
 num_pixels = X_train.shape[1] * X_train.shape[2]
@@ -35,9 +35,9 @@ y_train = y_train[:n]
 X_test = X_test[:n//20]
 y_test = y_test[:n//20]
 
-# print("train:", X_train.shape, ", test:", X_test.shape)
+print("train:", X_train.shape, ", test:", X_test.shape)
 
-orig_mnist_fit = fit_all(X_train, y_train, X_test, y_test, gamma=0.031, C=100)
+orig_mnist_fit = fit_all(X_train, y_train, X_test, y_test, gamma=0.001, C=100)
 
 save(orig_mnist_fit, 'orig_mnist_40000')
 

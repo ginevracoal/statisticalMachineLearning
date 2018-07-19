@@ -1,6 +1,7 @@
 # encode categorical featuers as numbers
 from sklearn.preprocessing import LabelEncoder
 from sklearn import preprocessing
+import numpy as np
 
 def number_encode_features(df):
   labels = df.copy()
