@@ -8,4 +8,4 @@
 #SBATCH --account=uts18_bortoldl_0
 
 . virtualenv_2/bin/activate
-python /galileo/home/userexternal/gcarbone/individual/code/covtype.py
+python /galileo/home/userexternal/gcarbone/individual/code/covtype.py 50000 > covtype_50000_galileo.out

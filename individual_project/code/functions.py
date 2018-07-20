@@ -117,6 +117,8 @@ def save(fit, filename):
 				pickle.dump(fit, handle, protocol=pickle.HIGHEST_PROTOCOL)
 
 # takes a fit_all argument
+
+
 def plot_results(fit):
 
 		sample_sizes = fit['sample_sizes']
@@ -141,11 +143,8 @@ def plot_results(fit):
 
 		accuracy = plt.subplot(211)
 		# second y axis for timings
-		timescale = plt.subplot(212)
 
 		accuracy.plot(sample_sizes, nystroem_scores, label="Nystroem approx. kernel")
-		timescale.plot(sample_sizes, nystroem_times, '--',
-		               label='Nystroem approx. kernel')
 
 		accuracy.plot(sample_sizes, fourier_scores, label="Fourier approx. kernel")
 		timescale.plot(sample_sizes, fourier_times, '--',
@@ -171,7 +170,7 @@ def plot_results(fit):
 		accuracy.set_xlim(sample_sizes[0], sample_sizes[-1])
 		timescale.set_xlim(sample_sizes[0], sample_sizes[-1])
 		# accuracy.set_xticks(())
-		accuracy.set_ylim(np.min(fourier_scores), kernel_svm_score+0.05)
+		accuracy.set_ylim(np.min(fourier_scores), kernel_svm_score*1.001)
 		timescale.set_xlabel("Number of samples")
 		accuracy.set_xlabel("Number of samples")
 		accuracy.set_ylabel("Classification accuracy")
@@ -180,3 +179,93 @@ def plot_results(fit):
 		timescale.legend(loc='best')
 
 		plt.show()
+
+def plot_accuracy(fit):
+
+		sample_sizes = fit['sample_sizes']
+
+		kernel = fit['kernel']
+		linear = fit['linear']
+		nystroem = fit['nystroem']
+		fourier = fit['fourier']
+
+		kernel_svm_score = kernel['score']
+		linear_svm_score = linear['score']
+		nystroem_scores = nystroem['scores']
+		fourier_scores = fourier['scores']
+
+		kernel_svm_time = kernel['time']
+		linear_svm_time = linear['time']
+		nystroem_times = nystroem['times']
+		fourier_times = fourier['times']
+		  
+		# plot the results
+		plt.figure(figsize=(8, 8))
+
+		accuracy = plt.subplot(211)
+
+		accuracy.plot(sample_sizes, nystroem_scores, label="Nystroem approx. kernel")
+		accuracy.plot(sample_sizes, fourier_scores, label="Fourier approx. kernel")
+		# horizontal lines for exact rbf and linear kernels:
+		accuracy.plot([sample_sizes[0], sample_sizes[-1]],
+		              [linear_svm_score, linear_svm_score], label="linear svm")
+		accuracy.plot([sample_sizes[0], sample_sizes[-1]],
+		              [kernel_svm_score, kernel_svm_score], label="RBF svm")
+
+
+
+		# vertical line for dataset dimensionality = 64
+		# accuracy.plot([64, 64], [0.7, 1], label="n_features")
+
+		# legends and labels
+		# accuracy.set_title("Classification accuracy")
+		# timescale.set_title("Training times")
+		accuracy.set_xlim(sample_sizes[0], sample_sizes[-1])
+
+		# accuracy.set_xticks(())
+		accuracy.set_ylim(np.min(fourier_scores), kernel_svm_score*1.001)
+		accuracy.set_xlabel("Number of samples")
+		accuracy.set_ylabel("Classification accuracy")
+		accuracy.legend(loc='best')
+
+
+
+		plt.show()
+
+def plot_timescale(fit):
+
+		sample_sizes = fit['sample_sizes']
+
+		kernel = fit['kernel']
+		linear = fit['linear']
+		nystroem = fit['nystroem']
+		fourier = fit['fourier']
+
+		kernel_svm_score = kernel['score']
+		linear_svm_score = linear['score']
+		nystroem_scores = nystroem['scores']
+		fourier_scores = fourier['scores']
+
+		kernel_svm_time = kernel['time']
+		linear_svm_time = linear['time']
+		nystroem_times = nystroem['times']
+		fourier_times = fourier['times']
+		  
+		# plot the results
+		plt.figure(figsize=(8, 8))
+
+		timescale = plt.subplot(212)
+	
+		timescale.plot(sample_sizes, nystroem_times, '--',
+		               label='Nystroem approx. kernel')
+
+		timescale.plot(sample_sizes, nystroem_times, '--', label='Nystroem approx. kernel')
+		timescale.plot(sample_sizes, fourier_times, '--', label='Fourier approx. kernel')
+		timescale.plot([sample_sizes[0], sample_sizes[-1]],
+		               [linear_svm_time, linear_svm_time], '--', label='linear svm')
+		timescale.plot([sample_sizes[0], sample_sizes[-1]],
+		               [kernel_svm_time, kernel_svm_time], '--', label='RBF svm')
+		timescale.set_xlim(sample_sizes[0], sample_sizes[-1])
+		timescale.set_xlabel("Number of samples")
+		timescale.set_ylabel("Training time (s)")
+		timescale.legend(loc='best')

@@ -22,7 +22,10 @@ nystroem = Nystroem(gamma=gamma, random_state=1)
 fourier_svm = pipeline.Pipeline([("feature_map", random_fourier),("svm", linear_svm)])
 nystroem_svm = pipeline.Pipeline([("feature_map", nystroem),("svm", linear_svm)])\
 
-def pca_projections(train_data, train_labels, n_components=len(np.unique(train_labels))):
+def pca_projections(train_data, train_labels, n_components=1):
+
+		if n_components == 1:
+				n_components = len(np.unique(train_labels))
 
 		## calculate real and predicted projections of points on the plane
 
@@ -76,6 +79,6 @@ def pca_projections(train_data, train_labels, n_components=len(np.unique(train_l
 
 		    plt.title(titles[i])
 
-		plt.tight_layout()
+		# plt.tight_layout()
 		plt.show()
 

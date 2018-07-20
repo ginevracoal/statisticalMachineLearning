@@ -3,9 +3,17 @@
 # import functions
 import encode_csv
 from functions import * 
-from encode_csv import * 
+from encode_csv import *
+import sys 
 
 path='/galileo/home/userexternal/gcarbone/individual/'
+
+## with this piece of code I can give the name as an input both from command line and as console input ;)
+if __name__ == "__main__":
+		try:
+				n = int(sys.argv[1])
+		except IndexError:
+				n = int(input("\nPlease give the number of observations (<= 60000): "))
 
 covtype = pd.read_csv(path+'datasets/covtype.data')
 
@@ -23,14 +31,9 @@ X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_
 
 print("train:", len(X_train), ", test:", len(X_test))
 
-# taking subsets
-
-n = 30000 
-covtype_fit_30000 = fit_all(X_train[:n], y_train[:n], X_test[:n//20], y_test[:n//20])
-save(covtype_fit_30000, 'covtype_fit_30000')
-
-n = 50000 
-covtype_fit_50000 = fit_all(X_train[:n], y_train[:n], X_test[:n//20], y_test[:n//20])
-save(covtype_fit_50000, 'covtype_fit_50000')
+# fit the model
+ 
+covtype_fit = fit_all(X_train[:n], y_train[:n], X_test[:n//20], y_test[:n//20], scale_samples=10)
+save(covtype_fit, 'covtype_fit_'+str(n)+'galileo')
 
 
