@@ -30,7 +30,6 @@ nystroem = Nystroem(gamma=gamma, random_state=1)
 fourier_svm = pipeline.Pipeline([("feature_map", random_fourier),("svm", linear_svm)])
 nystroem_svm = pipeline.Pipeline([("feature_map", nystroem),("svm", linear_svm)])
 
-
 # number of random samples
 def samples(train_data, scale_samples=scale_samples):
 		# samples = len(train_data)//60 * np.arange(1,10)
@@ -223,7 +222,7 @@ def plot_accuracy(fit):
 		accuracy.set_xlim(sample_sizes[0], sample_sizes[-1])
 
 		# accuracy.set_xticks(())
-		accuracy.set_ylim(np.min(fourier_scores), kernel_svm_score*1.001)
+		accuracy.set_ylim(np.min(fourier_scores), kernel_svm_score*1.02)
 		accuracy.set_xlabel("Number of samples")
 		accuracy.set_ylabel("Classification accuracy")
 		accuracy.legend(loc='best')
@@ -255,9 +254,6 @@ def plot_timescale(fit):
 		plt.figure(figsize=(8, 8))
 
 		timescale = plt.subplot(212)
-	
-		timescale.plot(sample_sizes, nystroem_times, '--',
-		               label='Nystroem approx. kernel')
 
 		timescale.plot(sample_sizes, nystroem_times, '--', label='Nystroem approx. kernel')
 		timescale.plot(sample_sizes, fourier_times, '--', label='Fourier approx. kernel')
