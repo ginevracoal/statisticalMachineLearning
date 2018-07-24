@@ -9,13 +9,18 @@ output:
     incremental: yes
     smaller: yes
     widescreen: yes
-    css: my.css
+    css: css/my.css
   html_document:
     toc: yes
 editor_options:
   chunk_output_type: inline
 always_allow_html: yes
 ---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(cache = TRUE)
+```
 
 ## Introduction | Kernel methods {.build}
 
@@ -45,6 +50,8 @@ one can avoid the explicit calculation of the feature map, by *working only with
 ## Introduction | Larges-scale problems {.build}
 
 The main limitation of kernel methods is their high **computational cost**, which is at least quadratic in the number of training points, due to storage and computation of the kernel matrix $K$.
+
+<!-- One of the characteristics of kernelized algorithms is that their runtime and space complexity is basically independent of the dimensionality of the input space, but rather scales with the number of data points used for training. -->
 
 Low-rank decompositions of $K$ (like **Cholesky decomposition**) are less expensive , but they still require its computation.
 
@@ -77,7 +84,7 @@ in which case both methods are valid.
 
 <br>
 
-Our general goal is to efficiently solve a regularized least squares problem 
+Our general goal is to efficiently solve a **regularized least squares problem** 
 $$
 \min_{f\in\mathcal{\mathcal{H}_\mathcal{D}}} \frac{\lambda}{2} \Vert f\Vert^2_{\mathcal{H}_\mathcal{D}} + \frac{1}{N} \sum_{i=1}^N l(f(x_i),y_i)
 $$
@@ -97,7 +104,7 @@ The main idea of the algorithm is to **approximate $K$** by the low-rank  matrix
 $$
 {\tilde{K}}_r = K_b \hat{K}^+ {K_b}^{-1},
 $$
-where $rank(\hat{K}) = r<m$, $K_b=[k(x_i,\hat{x}_j)]_{N\times m}$ and $\hat{K}^+$ is the Moore-Penrose pseudo inverse of $\hat{K}$ *[1, p.2]*.
+where $rank(\hat{K}) = r<m$, $K_b=[k(x_i,\hat{x}_j)]_{N\times m}$ and $\hat{K}^+$ is the Moore-Penrose pseudo inverse of $\hat{K}$ **[1, p.2]**.
 
 
 <!--principale: http://www.jmlr.org/papers/volume6/drineas05a/drineas05a.pdf -->
@@ -119,12 +126,8 @@ Thanks to this vector representation we can learn a linear machine $f(x)=w^t z_n
 $$
 \min_{w\in\mathbb{R}^r} \frac{\lambda}{2} \Vert w\Vert^2_2 + \frac{1}{N} \sum_{i=1}^N l(w^t z_n(x_i),y_i),
 $$
-which is equivalent to our original problem, under the assumption of searching the linear machine into an approximate subspace of $\mathcal{H}_\mathcal{D}$ *[2, p.3]*.
+which is equivalent to our original problem, under the assumption of searching the linear machine into an approximate subspace of $\mathcal{H}_\mathcal{D}$ **[2, p.3]**.
 
-<div align='center'>
-This method reduces storage and computational **complexity** of the Gram matrix <br> from $O(N^2)$ and $O(N^3)$ to $O(Nr)$ and $O(Nr^2)$ respectively.
-<!-- so they are linear in N! -->
-</div>
 
 
 ## Random Fourier features {.build}
@@ -141,7 +144,7 @@ $$
 p(w)=\int_{\mathbb{R^d}}e^{-2\pi i w^t \delta} k(\delta) d\delta\sim \mathcal{N}(0,I/\sigma^2)
 $$
 
-By projecting data onto **randomly chosen lines** with directions $w_1,\dots,w_n$ drawn from $p$, we guarantee that the inner product of two transformed points approximates the shift invariant kernel $k$ *[3]*.
+By projecting data onto **randomly chosen lines** with directions $w_1,\dots,w_n$ drawn from $p$, we guarantee that the inner product of two transformed points approximates the shift invariant kernel $k$ **[3]**.
 
 ## Random Fourier features {.build}
 
@@ -163,19 +166,30 @@ $$
 ## Theoretical comparison {.build}
 
 <div align='center'>
+
 *The high computational cost of kernel methods is due to  searching  <br>  for an optimal solution over a **large space** * $\mathcal{H}_\mathcal{D}$.
 
+</div>
 <br>
+<div align='center'>
 
 Both methods solve this problem by considering a randomly generated subspace $\mathcal{H}_a\subseteq \mathcal{H}_\mathcal{D}$. 
 
-The main difference is in the **sampling method** chosen for the basis functions spanning this space: 
-random Fourier features samples from a **data-independent** distribution, <br> while Nystroem method from a **data-dependent** distribution.
-</div> 
+They reduce storage and computation **complexities** of the Gram matrix <br> from $O(N^2)$ and $O(N^3)$ to $O(Nr)$ and $O(Nr^2)$ respectively, where $r$ is the rank of the approximation.
+<!-- so they are linear in N! -->
+
+</div>
 
 <br>
 
-This difference implies a significant impact on the **performances**, because in the case of a large *eigengap* Nystroem method is quicker at discovering the subspace spanned by the top eigenvectors *[2, p.4]*.
+<div align='center'>
+
+The main difference is in the **sampling method** chosen for the basis functions spanning this space: 
+random Fourier features samples from a **data-independent** distribution ($z_p(x)$), <br> while Nystroem method from a **data-dependent** distribution ($z_n(X)$).
+
+
+This implies a significant impact on the **performances**: the error bound is $O(N^{-1/2}+m^{-1/2})$ for kernel learning based on random Fourier features **[5]**, and $O(m^{-1/2})$ for Nystrom method. 
+</div> 
 
 <!-- meaning that the first eigenvalues of the kernel matrix are much larger that the others -->
 
@@ -187,13 +201,12 @@ This difference implies a significant impact on the **performances**, because in
 *Let's now make this discussion concrete* <br> and show some results on **SVM classifiers**.
 </div>
 
-<br>
+## Empirical results | SVM classification {.build}
 
-Both methods are provided by `scikit-learn` library as `RBFSampler` and `Nystroem` *[4]*. 
+Both methods are provided by `scikit-learn` library as `RBFSampler` and `Nystroem` **[4]**. 
 <!-- By default nystroem uses the rbf  -->
 
 I tested them against the **exact kernel methods** on **large enough** datasets, in order to show the improvements in performances.
-
 
 ``` python
 # SVM classifiers
@@ -209,10 +222,9 @@ fourier_svm = pipeline.Pipeline([("feature_map", random_fourier),("svm", linear_
 nystroem_svm = pipeline.Pipeline([("feature_map", nystroem),("svm", linear_svm)])
 ```
 
+`C` and `gamma` parameters were chosen by using `GridSearchCV` on random subsets of the observations.
 
-<!-- spiegare che i dati vanno centrati (pca) e grid search per gamma -->
-
-<!-- dire anche le caratteristiche di galileo -->
+<!-- dire anche le caratteristiche di galileo? -->
 
 ## Empirical results | SVM on Adult dataset {.build}
 
@@ -226,52 +238,118 @@ Binary classification on 123 features
 <!-- linear accuracy = rbf accuracy means that data is linearly sep -->
 
 <div class='columns-2'>
-<img src="../code/plots/adult_30000_accuracy.png" width=490>
+<img src="../code/plots/adult_30000_accuracy.png" width=480>
 
 <br>
 <br>
 
-<img src="../code/plots/adult_30000_timescale.png" width=490>
+<img src="../code/plots/adult_30000_timescale.png" width=480>
 </div>
 
 ## Empirical results | SVM on Covtype dataset
 
 <div align='center'>
-40000 training, 10000 test
+
+54 features and 7 classes
+
+40000 training - 10000 test
 </div>
 
 <!-- classificazione binaria -->
 <!-- linear accuracy = rbf accuracy (linearly sep) -->
 
 <div class='columns-2'>
-<img src="../code/plots/covtype_50000_accuracy.png" width=490>
+<img src="../code/plots/covtype_50000_accuracy.png" width=480>
 
 <br>
 <br>
 
-<img src="../code/plots/covtype_50000_timescale.png" width=490>
+<img src="../code/plots/covtype_50000_timescale.png" width=480>
 </div>
 
-## Empirical results | SVM on MNIST dataset
 
-## Empirical results | PCA ?
+## Empirical results | PCA on MNIST dataset
 
+<div align='center'>
+Comparing PCA methods on *30000 samples* vs *50 random samples*.
 
+Projecting on the first **10 principal components**.
+</div>
 
-## Final considerations {.build}
+<div class="columns-2">
+
+**Explained variance**
+
+```
+PCA:           [1.0767615  0.17251654 0.16026786 ..]
+Kernel PCA:    [0.04455248 0.00388328 0.00378083 ..]
+Fourier PCA:   [0.05280394 0.01386643 0.01111618 ..]
+Nystroem PCA:  [0.04452721 0.00361673 0.00343709 ..]
+```
+
+**Explained variance ratio**
+
+```
+PCA:           [0.53286827 0.08537508 0.07931344 ..]
+Kernel PCA:    [0.6300998  0.05492073 0.05347181 ..]
+Fourier PCA:   [0.36887358 0.09686702 0.0776545 ..]
+Nystroem PCA:  [0.6867357  0.05578024 0.0530096 ..]
+```
+
+<br>
+
+<br>
+
+**Execution time (s)**
+```
+PCA:           5.502045631408691
+Kernel PCA:    600.405962228775
+Fourier PCA:   0.97867751121521
+Nystroem PCA:  1.7912561893463135
+```
+</div>
+
+<!-- ## Empirical results | PCA on MNIST dataset -->
+
+<!-- Projections on the first 3 principal components. -->
+
+<!-- <iframe src="mnist_kpca_10000_3.html"></iframe> -->
+
+<!-- # ```{r include=FALSE, echo=FALSE, fig.height=20} -->
+<!-- #  -->
+<!-- # setwd("/home/ginevracoal/MEGA/Università/DSSC/semester_2/statistical_machine_learning/statisticalMachineLearning/individual_project/presentation") -->
+<!-- # shiny::includeHTML("../code/plots/mnist_kpca_10000_9.html") -->
+<!-- #  -->
+<!-- # ``` -->
+
+## Interesting considerations {.build}
+
+<div align='center'>
+These low-rank matrix approximations, based on the idea of solving non-linear problems using linear tecniques,  offer significant computational speed-up of all large-scale kernel learning methods.
+</div>
+<br>
+<div align='center'>
+In the case of a large eigengap **Nyström** Nystroem method shows significant improvements in the approximation error, because it is quicker at discovering the subspace spanned by the top eigenvectors **[2, p.4]**.
+</div>
+<br>
+<div align='center'>
+**Random Fourier features** perform better on interpolation tasks, due to the construction of smooth basis functions, while **Random Binning features** (a similar method based on randomly shifted grids of points) adapts better to memorization tasks **[3]**.
+
+</div>
 
 ## References
 
+[1] P. Drineas, M. W. Mahoney, "On the Nystrom Method for Approximating a Gram Matrix for Improved Kernel-Based Learning", 2005, http://www.jmlr.org/papers/volume6/drineas05a/drineas05a.pdf;
 
-[1] P.Drineas, M. W. Mahoney, "On the Nystrom Method for Approximating a Gram Matrix for Improved Kernel-Based Learning", 2005, http://www.jmlr.org/papers/volume6/drineas05a/drineas05a.pdf
+[2] T. Yang, Y.-F. Li, M. Mahdavi, R. Jin and Z.-H. ZhouNystrom, "Nystrom Method vs Random Fourier Features: A Theoretical and Empirical Comparison", 2012, NIPS, https://papers.nips.cc/paper/4588-nystrom-method-vs-random-fourier-features-a-theoretical-and-empirical-comparison.pdf;
 
-[2] T. Yang, Y.-F. Li, M. Mahdavi, R. Jin and Z.-H. ZhouNystrom, "Nystrom Method vs Random Fourier Features: A Theoretical and Empirical Comparison", 2012, NIPS, https://papers.nips.cc/paper/4588-nystrom-method-vs-random-fourier-features-a-theoretical-and-empirical-comparison.pdf.
+[3] A. Rahimi and B. Recht, "Random features for large-scale kernel machines" , 2007, NIPS, https://www.robots.ox.ac.uk/~vgg/rg/papers/randomfeatures.pdf;
 
-[3] A. Rahimi and B. Recht, "Random features for large-scale kernel machines" , 2007, NIPS, https://www.robots.ox.ac.uk/~vgg/rg/papers/randomfeatures.pdf.
+[4] "Explicit feature map approximation for RBF kernels", scikit-learn library, http://scikit-learn.org/stable/auto_examples/plot_kernel_approximation.html#sphx-glr-auto-examples-plot-kernel-approximation-py;
 
-[4] Explicit feature map approximation for RBF kernels, scikit-learn library, http://scikit-learn.org/stable/auto_examples/plot_kernel_approximation.html#sphx-glr-auto-examples-plot-kernel-approximation-py 
+[5] A. Rahimi and B. Recht, "Weighted Sums of Random Kitchen Sinks: Replacing minimization with randomization in learning", 2009, https://people.eecs.berkeley.edu/~brecht/papers/08.rah.rec.nips.pdf;
 
-
+[6] M. Mahdavi, T. Yang and R. Jin, "An Improved Bound for the Nystrom Method for Large Eigengap", 2012, https://arxiv.org/pdf/1209.0001.pdf.
 
 # Thank you for your attention
           

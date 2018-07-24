@@ -4,6 +4,11 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 
+from sklearn import svm, pipeline
+from sklearn.kernel_approximation import (RBFSampler,Nystroem)
+from sklearn import datasets
+
+##################################################
 
 # default parameters
 gamma=0.1
@@ -22,15 +27,18 @@ nystroem = Nystroem(gamma=gamma, random_state=1)
 fourier_svm = pipeline.Pipeline([("feature_map", random_fourier),("svm", linear_svm)])
 nystroem_svm = pipeline.Pipeline([("feature_map", nystroem),("svm", linear_svm)])\
 
+##################################################
+
+
 def pca_projections(train_data, train_labels, n_components=1):
 
 		if n_components == 1:
-				n_components = len(np.unique(train_labels))
+				n_components = train_data.shape[1]//2
 
 		## calculate real and predicted projections of points on the plane
 
 		# visualize the decision surface, projected down to the first
-		# two principal components of the dataset
+		# principal components of the dataset
 		pca = PCA(n_components=n_components).fit(train_data)
 
 		X = pca.transform(train_data)
@@ -81,4 +89,6 @@ def pca_projections(train_data, train_labels, n_components=1):
 
 		# plt.tight_layout()
 		plt.show()
+        
+
 
