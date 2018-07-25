@@ -120,13 +120,13 @@ $$
 
 ## Nyström method {.build}
 
-Thanks to this vector representation we can learn a linear machine $f(x)=w^t z_n(x)$ by solving 
+Thanks to this vector representation we can learn the linear machine $f(x)=w^t z_n(x)$ by solving 
 <!-- spiegare cosa sono le matrici di eigendecomposition -->
 
 $$
 \min_{w\in\mathbb{R}^r} \frac{\lambda}{2} \Vert w\Vert^2_2 + \frac{1}{N} \sum_{i=1}^N l(w^t z_n(x_i),y_i),
 $$
-which is equivalent to our original problem, under the assumption of searching the linear machine into an approximate subspace of $\mathcal{H}_\mathcal{D}$ **[2, p.3]**.
+which is equivalent to our original problem, under the assumption of searching the linear machine into the approximate subspace $\mathcal{H}_a := span(z_1(\cdot),\dots,z_n(\cdot))\subseteq\mathcal{H}_\mathcal{D}$ **[2, p.3]**.
 
 <br>
 
@@ -148,37 +148,40 @@ In the case of gaussian kernel, the theorem implies that the Fourier transform o
 <!-- controllare questa frase!!! -->
 
 $$
-p(w)=\int_{\mathbb{R^d}}e^{-i w^t \delta} k(\delta) d\delta\sim \mathcal{N}(0,I/\sigma^2)
+p(w)=\int_{\mathbb{R^d}}e^{-i w^t \delta} k(\delta) d\delta\sim \mathcal{N}(0,I/\sigma^2) 
 $$
 
 By projecting data onto **randomly chosen lines** with directions $w_1,\dots,w_m$ drawn from $p$, we guarantee that the inner product of two transformed points approximates the shift invariant kernel $k$ **[3]**.
 
 ## Random Fourier features {.build}
 
-The idea is to pass wrap these lines onto the unit circle through $z_w(x)=e^{iw^tx}$
+The idea is to wrap these lines onto the unit circle through $z_w(x)=e^{iw^tx}$
 
 <div align='center'>
 <img src="figures/random_fourier.png" height=200>
 </div>
 
-so that 
+so that, given $z_p(x)=(z_{w_1}(x),\dots,z_{w_m}(x))$, we have the following kernel representation
 $$
-k(x,y)=\int_{\mathbb{R^d}} e^{iw^t(x-y)} p(w) dw = E[z_p(x)^tz_p(y)].
+k(x,y)=\int_{\mathbb{R^d}} e^{iw^t(x-y)} p(w) dw = E[z_p(x)z_p(y)^*].
 $$
 
 ## Random Fourier features {.build}
 
-Given $z_p(x)=(z_{w_1}(x),\dots,z_{w_m}(x))$, we can now learn the linear machine $f(x)=w^t z_p(x)$
+We can now use the top $r$ normalized eigenfunctions $\hat{\varphi}_i$ of the linear operator $$L_m[f]:=\frac{1}{m}\sum_{i=1}^m k(\hat{x_i},\cdot)f(\hat{x_i})$$ to set the **approximate space** to $\mathcal{H}_a := span(\hat{\varphi}_1,\dots,\hat{\varphi}_r),$
+ and learn the linear machine $f(x)=u^t z_p(x)$:
 
 $$
-\min_{w\in\mathbb{R}^m} \frac{\lambda}{2} \Vert w\Vert^2_2 + \frac{1}{N} \sum_{i=1}^N l(w^t z_p(x_i),y_i).
+\min_{u\in\mathbb{R}^m} \frac{\lambda}{2} \Vert u\Vert^2_2 + \frac{1}{N} \sum_{i=1}^N l(u^t z_p(x_i),y_i).
 $$
 
 <!-- complessità computazionale??? -->
 
 <br>
-This method reduces storage and computation **complexities** of the Gram matrix <br> from $O(N^2)$ and $O(N^3)$ to $O(Nm)$ and $O(Nm^2)$ respectively.
 
+<div align='center'>
+This method reduces storage and computation **complexities** of the Gram matrix <br> from $O(N^2)$ and $O(N^3)$ to $O(Nm)$ and $O(Nm^2)$ respectively.
+</div>
 
 ## Theoretical comparison {.build}
 
@@ -201,7 +204,7 @@ Both methods solve this problem by considering a randomly generated subspace $\m
 <div align='center'>
 
 The main difference is in the **sampling method** chosen for the basis functions spanning this space: 
-random Fourier features samples from a **data-independent** distribution ($z_p(x)$), <br> while Nystroem method from a **data-dependent** distribution ($z_n(X)$).
+random Fourier features samples from a **data-independent** distribution ($z_p(x)$), <br> while Nystroem method from a **data-dependent** distribution ($z_n(x)$).
 
 
 This implies a significant impact on the **performances**: the error bound is $O(N^{-1/2}+m^{-1/2})$ for kernel learning based on random Fourier features **[5]**, and $O(m^{-1/2})$ for Nystrom method. 
@@ -211,11 +214,11 @@ This implies a significant impact on the **performances**: the error bound is $O
 
 # Testing phase
 
-## Empirical results | SVM classification {.build}
+<!-- ## Empirical results {.build} -->
 
-<div align='center'>
-*Let's now make this discussion concrete* <br> and show some results on **SVM classifiers** and **kernel PCA**.
-</div>
+<!-- <div align='center'> -->
+<!-- *Let's now make this discussion concrete* <br> and show some results on **SVM classifiers** and **kernel PCA**. -->
+<!-- </div> -->
 
 ## Empirical results | SVM classification {.build}
 
