@@ -128,9 +128,16 @@ $$
 $$
 which is equivalent to our original problem, under the assumption of searching the linear machine into an approximate subspace of $\mathcal{H}_\mathcal{D}$ **[2, p.3]**.
 
+<br>
+
+This method reduces storage and computation **complexities** of the Gram matrix <br> from $O(N^2)$ and $O(N^3)$ to $O(Nr)$ and $O(Nr^2)$ respectively, where $r$ is the rank of the approximation.
+<!-- so they are linear in N! -->
 
 
 ## Random Fourier features {.build}
+
+<!-- dimostrazioni
+https://pdfs.semanticscholar.org/presentation/eb4a/b4711aad9524d58e69f416ec3a8889cd4313.pdf-->
 
 Also known as **Random kitchen sinks** method, random Fourier features can be applied to all shift-invariant kernels, i.e. kernels of the form  $k(x,y)= k(x-y)$, since it relies upon the following result.
 
@@ -141,26 +148,36 @@ In the case of gaussian kernel, the theorem implies that the Fourier transform o
 <!-- controllare questa frase!!! -->
 
 $$
-p(w)=\int_{\mathbb{R^d}}e^{-2\pi i w^t \delta} k(\delta) d\delta\sim \mathcal{N}(0,I/\sigma^2)
+p(w)=\int_{\mathbb{R^d}}e^{-i w^t \delta} k(\delta) d\delta\sim \mathcal{N}(0,I/\sigma^2)
 $$
 
-By projecting data onto **randomly chosen lines** with directions $w_1,\dots,w_n$ drawn from $p$, we guarantee that the inner product of two transformed points approximates the shift invariant kernel $k$ **[3]**.
+By projecting data onto **randomly chosen lines** with directions $w_1,\dots,w_m$ drawn from $p$, we guarantee that the inner product of two transformed points approximates the shift invariant kernel $k$ **[3]**.
 
 ## Random Fourier features {.build}
 
-The idea is to pass these projections through sine and cosine functions $$z_p(x)=(sin(w_1^t x),cos(w_1^t x), \dots, sin(w_n^t x), cos(w_n^t x))$$ 
+The idea is to pass wrap these lines onto the unit circle through $z_w(x)=e^{iw^tx}$
 
 <div align='center'>
 <img src="figures/random_fourier.png" height=200>
 </div>
 
-and then learn a linear machine $f(x)=w^t z_p(x)$ from
+so that 
+$$
+k(x,y)=\int_{\mathbb{R^d}} e^{iw^t(x-y)} p(w) dw = E[z_p(x)^tz_p(y)].
+$$
+
+## Random Fourier features {.build}
+
+Given $z_p(x)=(z_{w_1}(x),\dots,z_{w_m}(x))$, we can now learn the linear machine $f(x)=w^t z_p(x)$
 
 $$
-\min_{w\in\mathbb{R}^{2m}} \frac{\lambda}{2} \Vert w\Vert^2_2 + \frac{1}{N} \sum_{i=1}^N l(w^t z_p(x_i),y_i).
+\min_{w\in\mathbb{R}^m} \frac{\lambda}{2} \Vert w\Vert^2_2 + \frac{1}{N} \sum_{i=1}^N l(w^t z_p(x_i),y_i).
 $$
 
 <!-- complessità computazionale??? -->
+
+<br>
+This method reduces storage and computation **complexities** of the Gram matrix <br> from $O(N^2)$ and $O(N^3)$ to $O(Nm)$ and $O(Nm^2)$ respectively.
 
 
 ## Theoretical comparison {.build}
@@ -175,8 +192,7 @@ $$
 
 Both methods solve this problem by considering a randomly generated subspace $\mathcal{H}_a\subseteq \mathcal{H}_\mathcal{D}$. 
 
-They reduce storage and computation **complexities** of the Gram matrix <br> from $O(N^2)$ and $O(N^3)$ to $O(Nr)$ and $O(Nr^2)$ respectively, where $r$ is the rank of the approximation.
-<!-- so they are linear in N! -->
+
 
 </div>
 
@@ -198,7 +214,7 @@ This implies a significant impact on the **performances**: the error bound is $O
 ## Empirical results | SVM classification {.build}
 
 <div align='center'>
-*Let's now make this discussion concrete* <br> and show some results on **SVM classifiers**.
+*Let's now make this discussion concrete* <br> and show some results on **SVM classifiers** and **kernel PCA**.
 </div>
 
 ## Empirical results | SVM classification {.build}
@@ -212,18 +228,18 @@ I tested them against the **exact kernel methods** on **large enough** datasets,
 # SVM classifiers
 kernel_svm = svm.SVC(kernel='rbf', gamma=gamma, C=C)
 linear_svm = svm.SVC(kernel='linear', C=C)
-
 # the two methods
 random_fourier = RBFSampler(gamma=gamma, random_state=1)
 nystroem = Nystroem(gamma=gamma, random_state=1)
-
 # pipelines for kernel approximations
 fourier_svm = pipeline.Pipeline([("feature_map", random_fourier),("svm", linear_svm)])
 nystroem_svm = pipeline.Pipeline([("feature_map", nystroem),("svm", linear_svm)])
 ```
 
-`C` and `gamma` parameters were chosen by using `GridSearchCV` on random subsets of the observations.
-
+`C` and `gamma` parameters were chosen by using `GridSearchCV` on a random small subset of the observations.
+``` python
+param_grid = {'C': [1, 10, 100, 1000], 'gamma': [1, 0.1, 0.01, 0.001]} 
+```
 <!-- dire anche le caratteristiche di galileo? -->
 
 ## Empirical results | SVM on Adult dataset {.build}
@@ -238,12 +254,12 @@ Binary classification on 123 features
 <!-- linear accuracy = rbf accuracy means that data is linearly sep -->
 
 <div class='columns-2'>
-<img src="../code/plots/adult_30000_accuracy.png" width=480>
+<img src="../code/plots/adult_30000_accuracy_final.png" width=480>
 
 <br>
 <br>
 
-<img src="../code/plots/adult_30000_timescale.png" width=480>
+<img src="../code/plots/adult_30000_timescale_final.png" width=480>
 </div>
 
 ## Empirical results | SVM on Covtype dataset
@@ -264,14 +280,14 @@ Binary classification on 123 features
 <br>
 <br>
 
-<img src="../code/plots/covtype_50000_timescale.png" width=480>
+<img src="../code/plots/covtype_50000_timescale_final.png" width=480>
 </div>
 
 
 ## Empirical results | PCA on MNIST dataset
 
 <div align='center'>
-Comparing PCA methods on *30000 samples* vs *50 random samples*.
+Comparing PCA methods on *20000 samples* vs *50 random samples*.
 
 Projecting on the first **10 principal components**.
 </div>
@@ -281,19 +297,17 @@ Projecting on the first **10 principal components**.
 **Explained variance**
 
 ```
-PCA:           [1.0767615  0.17251654 0.16026786 ..]
-Kernel PCA:    [0.04455248 0.00388328 0.00378083 ..]
-Fourier PCA:   [0.05280394 0.01386643 0.01111618 ..]
-Nystroem PCA:  [0.04452721 0.00361673 0.00343709 ..]
+Kernel PCA:    [0.04455248 0.00388329 0.00378083 ..]
+Fourier PCA:   [0.05280394 0.01386613 0.01111522 ..]
+Nystroem PCA:  [0.04452722 0.00361673 0.00343708 ..]
 ```
 
 **Explained variance ratio**
 
 ```
-PCA:           [0.53286827 0.08537508 0.07931344 ..]
-Kernel PCA:    [0.6300998  0.05492073 0.05347181 ..]
-Fourier PCA:   [0.36887358 0.09686702 0.0776545 ..]
-Nystroem PCA:  [0.6867357  0.05578024 0.0530096 ..]
+Kernel PCA:    [0.354843   0.03092884 0.03011284 ..]
+Fourier PCA:   [0.36885661 0.09686044 0.07764426 ..]
+Nystroem PCA:  [0.68685186 0.05578958 0.05301842 ..]
 ```
 
 <br>
@@ -302,10 +316,9 @@ Nystroem PCA:  [0.6867357  0.05578024 0.0530096 ..]
 
 **Execution time (s)**
 ```
-PCA:           5.502045631408691
-Kernel PCA:    600.405962228775
-Fourier PCA:   0.97867751121521
-Nystroem PCA:  1.7912561893463135
+Kernel PCA:    589.1665153503418
+Fourier PCA:   0.6793737411499023
+Nystroem PCA:  1.8425300121307373
 ```
 </div>
 

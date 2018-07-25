@@ -173,7 +173,7 @@ def plot_results(fit):
 		timescale.set_xlabel("Number of samples")
 		accuracy.set_xlabel("Number of samples")
 		accuracy.set_ylabel("Classification accuracy")
-		timescale.set_ylabel("Training time (s)")
+		timescale.set_ylabel("Training time (min)")
 		accuracy.legend(loc='best')
 		timescale.legend(loc='best')
 
@@ -192,11 +192,6 @@ def plot_accuracy(fit):
 		linear_svm_score = linear['score']
 		nystroem_scores = nystroem['scores']
 		fourier_scores = fourier['scores']
-
-		kernel_svm_time = kernel['time']
-		linear_svm_time = linear['time']
-		nystroem_times = nystroem['times']
-		fourier_times = fourier['times']
 		  
 		# plot the results
 		plt.figure(figsize=(8, 8))
@@ -240,15 +235,10 @@ def plot_timescale(fit):
 		nystroem = fit['nystroem']
 		fourier = fit['fourier']
 
-		kernel_svm_score = kernel['score']
-		linear_svm_score = linear['score']
-		nystroem_scores = nystroem['scores']
-		fourier_scores = fourier['scores']
-
-		kernel_svm_time = kernel['time']
-		linear_svm_time = linear['time']
-		nystroem_times = nystroem['times']
-		fourier_times = fourier['times']
+		kernel_svm_time = kernel['time']*60
+		linear_svm_time = linear['time']*60
+		nystroem_times = [time*60 for time in nystroem['times']]
+		fourier_times = [time*60 for time in fourier['times']]	
 		  
 		# plot the results
 		plt.figure(figsize=(8, 8))
@@ -263,5 +253,5 @@ def plot_timescale(fit):
 		               [kernel_svm_time, kernel_svm_time], '--', label='RBF svm')
 		timescale.set_xlim(sample_sizes[0], sample_sizes[-1])
 		timescale.set_xlabel("Number of samples")
-		timescale.set_ylabel("Training time (s)")
+		timescale.set_ylabel("Training time (min)")
 		timescale.legend(loc='best')
