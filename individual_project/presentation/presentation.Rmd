@@ -9,7 +9,6 @@ output:
     incremental: yes
     smaller: yes
     widescreen: yes
-    css: css/my.css
   html_document:
     toc: yes
 editor_options:
@@ -286,6 +285,15 @@ Binary classification on 123 features
 <img src="../code/plots/covtype_50000_timescale_final.png" width=480>
 </div>
 
+## Interesting considerations {.build}
+
+<div align='center'>
+These low-rank matrix approximations, based on the idea of solving non-linear problems using linear tecniques,  offer significant computational speed-up of all large-scale kernel learning methods.
+</div>
+<br>
+<div align='center'>
+In the case of a large eigengap **Nyström** Nystroem method shows significant improvements in the approximation error, because it is quicker at discovering the subspace spanned by the top eigenvectors **[2, p.4]**.
+</div>
 
 ## Empirical results | PCA on MNIST dataset
 
@@ -338,7 +346,7 @@ Nystroem PCA:  1.8425300121307373
 <!-- #  -->
 <!-- # ``` -->
 
-## Interesting considerations {.build}
+## Interesting considerations 
 
 <div align='center'>
 These low-rank matrix approximations, based on the idea of solving non-linear problems using linear tecniques,  offer significant computational speed-up of all large-scale kernel learning methods.

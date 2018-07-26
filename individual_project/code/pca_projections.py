@@ -13,7 +13,7 @@ from sklearn import datasets
 # default parameters
 gamma=0.1
 C = 100
-scale_samples = 30
+scale_samples = 10
 
 # SVM classifiers
 kernel_svm = svm.SVC(kernel='rbf', gamma=gamma, C=C)
